@@ -1,8 +1,13 @@
+mod game;
+
 fn main() {
     println!("Hello world! Ready to be pingpanged?!");
-    test();
+    game::main();
+    print();
 }
 
-fn test() {
+fn print() {
    println!("uh yeah");
 }
+
+
