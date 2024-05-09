@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use ggez::{conf::WindowMode, mint::{Point2, Vector2}, *};
+use ggez::{conf::WindowMode, input::mouse::delta, mint::{Point2, Vector2}, *};
 use ggez::graphics::Rect;
 use ggez::input::keyboard;
 
@@ -69,6 +69,7 @@ impl State {
         self.ball.vel = mint::Vector2{x: BALL_VELOCITY, y: BALL_VELOCITY};
         self.pad.rect.y = SCREEN_HEIGHT_MID - (PAD_LENGTH / 2.0);
         self.score = 0;
+        println!("New game iteration.");
     }
 
     pub fn gogetball(&mut self) {
@@ -130,10 +131,15 @@ impl ggez::event::EventHandler for State {
 
         // ball & pad collisions
         if (check_collision(mint::Point2{x: self.ball.pos.x, y: self.ball.pos.y}, BALL_RADIUS, &self.pad.rect)) {
-            self.ball.vel.x *= -1.0;
-            self.ball.pos.x += self.ball.vel.x * delta_time;
-            self.score += 1;
-            println!("score: {}", self.score);
+            if (self.ball.pos.y < self.pad.rect.y || self.ball.pos.y > (self.pad.rect.y + PAD_LENGTH) ) {
+                self.ball.vel.y *= -1.0;
+                self.ball.pos.y += self.ball.vel.y * delta_time;
+            } else {
+                self.ball.vel.x *= -1.0;
+                self.ball.pos.x += self.ball.vel.x * delta_time;
+                self.score += 1;
+                println!("score: {}", self.score);
+            }
         } 
 
         // score keeping & reset
@@ -141,9 +147,10 @@ impl ggez::event::EventHandler for State {
             self.reset();
         }
 
-        // bug fixes 
+        // edge cases 
         if (self.ball.pos.x > SCREEN_WIDTH || self.ball.pos.y < 0.0 || self.ball.pos.y > SCREEN_HEIGHT) {
             self.gogetball();
+            println!("Oops, ball went out of bound!")
         }
 
         Ok(())
@@ -171,12 +178,11 @@ impl ggez::event::EventHandler for State {
                 graphics::Color::WHITE,
             )?;
         
-        // TODO: Score System
+        // TODO: Draw score onto canvas
 
         // set the params for drawing (this gets the position done)
         let mut draw_parameters = graphics::DrawParam::default();
         
-
         draw_parameters.dest(self.ball.pos);    // update the ball
         draw_parameters.dest(mint::Point2{x: self.pad.rect.x, y: self.pad.rect.y}); // pad update
 
@@ -195,7 +201,6 @@ pub fn main() {
     let (mut context, event_loop) = context_builder.build().unwrap();
     let mut state = State::new(&mut context);
     context.gfx.set_window_title("pingpangpong");
-    // context.gfx.set_resizable(true);
 
     ggez::event::run(context, event_loop, state);
 }
