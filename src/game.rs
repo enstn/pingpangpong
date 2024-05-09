@@ -7,7 +7,7 @@ const SCREEN_HEIGHT: f32 = 600.0;
 const SCREEN_WIDTH_MID: f32 = SCREEN_WIDTH / 2.0;
 const SCREEN_HEIGHT_MID: f32 = SCREEN_HEIGHT / 2.0;
 
-const BALL_VELOCITY: f32 = 500.0;
+const BALL_VELOCITY: f32 = 300.0;
 const BALL_RADIUS: f32 = 10.0;
 const BALL_RADIUS_MID: f32 = BALL_RADIUS / 2.0;
 
@@ -61,6 +61,20 @@ impl State {
     }
 }
 
+fn check_collision (ball_pos: mint::Point2<f32>, ball_radius: f32, rect: &ggez::graphics::Rect) -> bool {
+    let closest_x = ball_pos.x.min(rect.x + rect.w).max(rect.x);
+    let closest_y = ball_pos.y.min(rect.y + rect.h).max(rect.y);
+
+    let distance_x = ball_pos.x - closest_x;
+    let distance_y = ball_pos.y - closest_y;
+
+    if ( (distance_x.powi(2) + distance_y.powi(2)) < ball_radius.powi(2) ) {
+        return true;
+    }
+
+    return false;
+}
+
 impl ggez::event::EventHandler for State {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
         let delta_time = ctx.time.delta().as_secs_f32();
@@ -92,7 +106,9 @@ impl ggez::event::EventHandler for State {
         }
 
         // TODO: pad-ball collisions
-        
+        if (check_collision(mint::Point2{x: self.ball.pos.x + BALL_RADIUS, y: self.ball.pos.y + BALL_RADIUS}, BALL_RADIUS, &self.pad.rect)) {
+            self.ball.vel.x *= -1.0;
+       } 
 
 
         // TODO: Score & reset
