@@ -1,5 +1,6 @@
 use ggez::{conf::WindowMode, mint::{Point2, Vector2}, *};
 use ggez::graphics::Rect;
+use ggez::input::keyboard;
 
 const SCREEN_WIDTH: f32 = 800.0;
 const SCREEN_HEIGHT: f32 = 600.0;
@@ -17,8 +18,6 @@ const PAD_LEFT_EDGE: f32 = 40.0;
 
 struct Pad {
     rect: Rect,
-    pos: mint::Point2<f32>,
-    vel: mint::Vector2<f32>,
 }
 
 impl Pad {
@@ -30,8 +29,6 @@ impl Pad {
                 PAD_WIDTH,
                 PAD_LENGTH,
             ),
-            pos: mint::Point2{x: PAD_LEFT_EDGE, y: SCREEN_HEIGHT_MID},
-            vel: mint::Vector2{x: 0.0, y: PAD_VELOCITY},
         }
     }
 }
@@ -82,8 +79,22 @@ impl ggez::event::EventHandler for State {
             self.ball.vel.y *= -1.0;
         }
 
-        // TODO: pad_movement with key input
+        // pad movement w/ key inputs
+        if (ctx.keyboard.is_key_pressed( keyboard::KeyCode::Up)) {
+            if (self.pad.rect.y > 0.0) {
+                self.pad.rect.y -= PAD_VELOCITY * delta_time;
+            }
+        }
+        if (ctx.keyboard.is_key_pressed( keyboard::KeyCode::Down)) {
+            if (self.pad.rect.y < (SCREEN_HEIGHT - PAD_LENGTH)) {
+                self.pad.rect.y += PAD_VELOCITY * delta_time;
+            }
+        }
+
         // TODO: pad-ball collisions
+        
+
+
         // TODO: Score & reset
 
         Ok(())
@@ -109,13 +120,15 @@ impl ggez::event::EventHandler for State {
                 self.pad.rect,
                 graphics::Color::WHITE,
             )?;
-
+        
         // TODO: Score System
 
         // set the params for drawing (this gets the position done)
         let mut draw_parameters = graphics::DrawParam::default();
+        
 
-        draw_parameters.dest(self.ball.pos);
+        draw_parameters.dest(self.ball.pos);    // update the ball
+        draw_parameters.dest(mint::Point2{x: self.pad.rect.x, y: self.pad.rect.y}); // pad update
 
         // I like it, picasso
         canvas.draw(&ball, draw_parameters);
