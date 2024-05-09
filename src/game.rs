@@ -9,7 +9,7 @@ const SCREEN_HEIGHT: f32 = 600.0;
 const SCREEN_WIDTH_MID: f32 = SCREEN_WIDTH / 2.0;
 const SCREEN_HEIGHT_MID: f32 = SCREEN_HEIGHT / 2.0;
 
-const BALL_VELOCITY: f32 = 600.0;
+const BALL_VELOCITY: f32 = 300.0;
 const BALL_RADIUS: f32 = 10.0;
 const BALL_RADIUS_MID: f32 = BALL_RADIUS / 2.0;
 
@@ -131,7 +131,7 @@ impl ggez::event::EventHandler for State {
         // ball & pad collisions
         if (check_collision(mint::Point2{x: self.ball.pos.x, y: self.ball.pos.y}, BALL_RADIUS, &self.pad.rect)) {
             self.ball.vel.x *= -1.0;
-            self.ball.vel.x += self.ball.vel.x * delta_time;
+            self.ball.pos.x += self.ball.vel.x * delta_time;
             self.score += 1;
             println!("score: {}", self.score);
         } 
