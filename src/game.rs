@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use ggez::{conf::WindowMode, mint::{Point2, Vector2}, *};
 use ggez::graphics::Rect;
 use ggez::input::keyboard;
@@ -7,7 +9,7 @@ const SCREEN_HEIGHT: f32 = 600.0;
 const SCREEN_WIDTH_MID: f32 = SCREEN_WIDTH / 2.0;
 const SCREEN_HEIGHT_MID: f32 = SCREEN_HEIGHT / 2.0;
 
-const BALL_VELOCITY: f32 = 300.0;
+const BALL_VELOCITY: f32 = 600.0;
 const BALL_RADIUS: f32 = 10.0;
 const BALL_RADIUS_MID: f32 = BALL_RADIUS / 2.0;
 
@@ -50,6 +52,7 @@ impl Ball {
 struct State {
     ball: Ball,
     pad: Pad,
+    score: u32,
 }
 
 impl State {
@@ -57,7 +60,20 @@ impl State {
         State {
             ball: Ball::new(),
             pad: Pad::new(),
+            score: 0,
         }
+    }
+    
+    pub fn reset(&mut self) {
+        self.ball.pos = mint::Point2{x: SCREEN_WIDTH_MID - BALL_RADIUS_MID, y: SCREEN_HEIGHT_MID - BALL_RADIUS_MID};
+        self.ball.vel = mint::Vector2{x: BALL_VELOCITY, y: BALL_VELOCITY};
+        self.pad.rect.y = SCREEN_HEIGHT_MID - (PAD_LENGTH / 2.0);
+        self.score = 0;
+    }
+
+    pub fn gogetball(&mut self) {
+        self.ball.pos = mint::Point2{x: SCREEN_WIDTH_MID - BALL_RADIUS_MID, y: SCREEN_HEIGHT_MID - BALL_RADIUS_MID};
+        self.ball.vel = mint::Vector2{x: BALL_VELOCITY, y: BALL_VELOCITY};
     }
 }
 
@@ -75,6 +91,8 @@ fn check_collision (ball_pos: mint::Point2<f32>, ball_radius: f32, rect: &ggez::
     return false;
 }
 
+
+
 impl ggez::event::EventHandler for State {
     fn update(&mut self, ctx: &mut Context) -> GameResult {
         let delta_time = ctx.time.delta().as_secs_f32();
@@ -86,11 +104,16 @@ impl ggez::event::EventHandler for State {
         };
 
         // ball collisions
-        if (self.ball.pos.x > SCREEN_WIDTH || self.ball.pos.x < 0.0) {
+        if (self.ball.pos.x > SCREEN_WIDTH) {
             self.ball.vel.x *= -1.0;
+            self.ball.pos.x += self.ball.vel.x * delta_time;
+            self.ball.pos.y += self.ball.vel.y * delta_time;
         }
         if (self.ball.pos.y > SCREEN_HEIGHT || self.ball.pos.y < 0.0) {
             self.ball.vel.y *= -1.0;
+            self.ball.pos.x += self.ball.vel.x * delta_time;
+            self.ball.pos.y += self.ball.vel.y * delta_time;
+
         }
 
         // pad movement w/ key inputs
@@ -105,16 +128,27 @@ impl ggez::event::EventHandler for State {
             }
         }
 
-        // TODO: pad-ball collisions
-        if (check_collision(mint::Point2{x: self.ball.pos.x + BALL_RADIUS, y: self.ball.pos.y + BALL_RADIUS}, BALL_RADIUS, &self.pad.rect)) {
+        // ball & pad collisions
+        if (check_collision(mint::Point2{x: self.ball.pos.x, y: self.ball.pos.y}, BALL_RADIUS, &self.pad.rect)) {
             self.ball.vel.x *= -1.0;
-       } 
+            self.ball.vel.x += self.ball.vel.x * delta_time;
+            self.score += 1;
+            println!("score: {}", self.score);
+        } 
 
+        // score keeping & reset
+        if (self.ball.pos.x <= 0.0) {
+            self.reset();
+        }
 
-        // TODO: Score & reset
+        // bug fixes 
+        if (self.ball.pos.x > SCREEN_WIDTH || self.ball.pos.y < 0.0 || self.ball.pos.y > SCREEN_HEIGHT) {
+            self.gogetball();
+        }
 
         Ok(())
     }
+
     fn draw(&mut self, ctx: &mut Context) -> GameResult {
         // create a canvas first to draw on
         let mut canvas = graphics::Canvas::from_frame(ctx, graphics::Color::BLACK);
