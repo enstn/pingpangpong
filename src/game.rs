@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use ggez::{conf::WindowMode, input::mouse::delta, mint::{Point2, Vector2}, *};
+use ggez::{conf::WindowMode, graphics::Text, input::mouse::delta, mint::{Point2, Vector2}, *};
 use ggez::graphics::Rect;
 use ggez::input::keyboard;
 
@@ -17,6 +17,8 @@ const PAD_VELOCITY: f32 = 500.0;
 const PAD_LENGTH: f32 = 100.0;
 const PAD_WIDTH: f32 = 10.0;
 const PAD_LEFT_EDGE: f32 = 40.0;
+
+const SCORE_FONT_SIZE: f32 = 29.0;
 
 struct Pad {
     rect: Rect,
@@ -179,16 +181,22 @@ impl ggez::event::EventHandler for State {
             )?;
         
         // TODO: Draw score onto canvas
+        let mut score = ggez::graphics::Text::new(format!("Score: {}", self.score));
+        score.set_scale(SCORE_FONT_SIZE);
+        let score_dimensions = score.measure(ctx);
+        let score_width = score_dimensions.unwrap().x;
 
         // set the params for drawing (this gets the position done)
         let mut draw_parameters = graphics::DrawParam::default();
         
-        draw_parameters.dest(self.ball.pos);    // update the ball
-        draw_parameters.dest(mint::Point2{x: self.pad.rect.x, y: self.pad.rect.y}); // pad update
-
-        // I like it, picasso
+        draw_parameters.dest(self.ball.pos);
         canvas.draw(&ball, draw_parameters);
+
+        draw_parameters.dest(mint::Point2{x: self.pad.rect.x, y: self.pad.rect.y}); // pad update
         canvas.draw(&pad, draw_parameters);
+        
+        canvas.draw(&score, mint::Point2{x: SCREEN_WIDTH - score_width, y: 2.0});
+        // I like it, picasso
         canvas.finish(ctx);
         Ok(())
     }
@@ -197,7 +205,7 @@ impl ggez::event::EventHandler for State {
 pub fn main() {
 
     let context_builder = ggez::ContextBuilder::new("pingpangpong", "Lai")
-        .window_mode(ggez::conf::WindowMode::default().dimensions(SCREEN_WIDTH, SCREEN_HEIGHT).borderless(true));
+        .window_mode(ggez::conf::WindowMode::default().dimensions(SCREEN_WIDTH, SCREEN_HEIGHT).borderless(false));
     let (mut context, event_loop) = context_builder.build().unwrap();
     let mut state = State::new(&mut context);
     context.gfx.set_window_title("pingpangpong");
