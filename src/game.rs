@@ -1,6 +1,4 @@
-use std::time::Duration;
-
-use ggez::{conf::WindowMode, graphics::Text, input::mouse::delta, mint::{Point2, Vector2}, *};
+use ggez::*;
 use ggez::graphics::Rect;
 use ggez::input::keyboard;
 
@@ -18,7 +16,7 @@ const PAD_LENGTH: f32 = 100.0;
 const PAD_WIDTH: f32 = 10.0;
 const PAD_LEFT_EDGE: f32 = 40.0;
 
-const SCORE_FONT_SIZE: f32 = 29.0;
+const SCORE_FONT_SIZE: f32 = 30.0;
 
 struct Pad {
     rect: Rect,
@@ -58,7 +56,7 @@ struct State {
 }
 
 impl State {
-    pub fn new(ctx: &mut Context) -> Self {
+    pub fn new(_ctx: &mut Context) -> Self {
         State {
             ball: Ball::new(),
             pad: Pad::new(),
@@ -87,7 +85,7 @@ fn check_collision (ball_pos: mint::Point2<f32>, ball_radius: f32, rect: &ggez::
     let distance_x = ball_pos.x - closest_x;
     let distance_y = ball_pos.y - closest_y;
 
-    if ( (distance_x.powi(2) + distance_y.powi(2)) < ball_radius.powi(2) ) {
+    if (distance_x.powi(2) + distance_y.powi(2)) < ball_radius.powi(2) {
         return true;
     }
 
@@ -107,12 +105,12 @@ impl ggez::event::EventHandler for State {
         };
 
         // ball collisions
-        if (self.ball.pos.x > SCREEN_WIDTH) {
+        if self.ball.pos.x > SCREEN_WIDTH {
             self.ball.vel.x *= -1.0;
             self.ball.pos.x += self.ball.vel.x * delta_time;
             self.ball.pos.y += self.ball.vel.y * delta_time;
         }
-        if (self.ball.pos.y > SCREEN_HEIGHT || self.ball.pos.y < 0.0) {
+        if self.ball.pos.y > SCREEN_HEIGHT || self.ball.pos.y < 0.0 {
             self.ball.vel.y *= -1.0;
             self.ball.pos.x += self.ball.vel.x * delta_time;
             self.ball.pos.y += self.ball.vel.y * delta_time;
@@ -120,20 +118,20 @@ impl ggez::event::EventHandler for State {
         }
 
         // pad movement w/ key inputs
-        if (ctx.keyboard.is_key_pressed( keyboard::KeyCode::Up)) {
-            if (self.pad.rect.y > 0.0) {
+        if ctx.keyboard.is_key_pressed( keyboard::KeyCode::Up) {
+            if self.pad.rect.y > 0.0 {
                 self.pad.rect.y -= PAD_VELOCITY * delta_time;
             }
         }
-        if (ctx.keyboard.is_key_pressed( keyboard::KeyCode::Down)) {
-            if (self.pad.rect.y < (SCREEN_HEIGHT - PAD_LENGTH)) {
+        if ctx.keyboard.is_key_pressed( keyboard::KeyCode::Down) {
+            if self.pad.rect.y < (SCREEN_HEIGHT - PAD_LENGTH) {
                 self.pad.rect.y += PAD_VELOCITY * delta_time;
             }
         }
 
         // ball & pad collisions
-        if (check_collision(mint::Point2{x: self.ball.pos.x, y: self.ball.pos.y}, BALL_RADIUS, &self.pad.rect)) {
-            if (self.ball.pos.y < self.pad.rect.y || self.ball.pos.y > (self.pad.rect.y + PAD_LENGTH) ) {
+        if check_collision(mint::Point2{x: self.ball.pos.x, y: self.ball.pos.y}, BALL_RADIUS, &self.pad.rect) {
+            if self.ball.pos.y < self.pad.rect.y || self.ball.pos.y > (self.pad.rect.y + PAD_LENGTH) {
                 self.ball.vel.y *= -1.0;
                 self.ball.pos.y += self.ball.vel.y * delta_time;
             } else {
@@ -145,12 +143,12 @@ impl ggez::event::EventHandler for State {
         } 
 
         // score keeping & reset
-        if (self.ball.pos.x <= 0.0) {
+        if self.ball.pos.x <= 0.0 {
             self.reset();
         }
 
         // edge cases 
-        if (self.ball.pos.x > SCREEN_WIDTH || self.ball.pos.y < 0.0 || self.ball.pos.y > SCREEN_HEIGHT) {
+        if self.ball.pos.x > SCREEN_WIDTH || self.ball.pos.y < 0.0 || self.ball.pos.y > SCREEN_HEIGHT {
             self.gogetball();
             println!("Oops, ball went out of bound!")
         }
@@ -180,14 +178,13 @@ impl ggez::event::EventHandler for State {
                 graphics::Color::WHITE,
             )?;
         
-        // TODO: Draw score onto canvas
         let mut score = ggez::graphics::Text::new(format!("Score: {}", self.score));
         score.set_scale(SCORE_FONT_SIZE);
         let score_dimensions = score.measure(ctx);
         let score_width = score_dimensions.unwrap().x;
 
         // set the params for drawing (this gets the position done)
-        let mut draw_parameters = graphics::DrawParam::default();
+        let draw_parameters = graphics::DrawParam::default();
         
         draw_parameters.dest(self.ball.pos);
         canvas.draw(&ball, draw_parameters);
@@ -197,7 +194,7 @@ impl ggez::event::EventHandler for State {
         
         canvas.draw(&score, mint::Point2{x: SCREEN_WIDTH - score_width, y: 2.0});
         // I like it, picasso
-        canvas.finish(ctx);
+        let _ = canvas.finish(ctx);
         Ok(())
     }
 }
@@ -207,7 +204,7 @@ pub fn main() {
     let context_builder = ggez::ContextBuilder::new("pingpangpong", "Lai")
         .window_mode(ggez::conf::WindowMode::default().dimensions(SCREEN_WIDTH, SCREEN_HEIGHT).borderless(false));
     let (mut context, event_loop) = context_builder.build().unwrap();
-    let mut state = State::new(&mut context);
+    let state = State::new(&mut context);
     context.gfx.set_window_title("pingpangpong");
 
     ggez::event::run(context, event_loop, state);
