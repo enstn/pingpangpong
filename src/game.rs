@@ -134,11 +134,10 @@ impl ggez::event::EventHandler for State {
             if self.ball.pos.y < self.pad.rect.y || self.ball.pos.y > (self.pad.rect.y + PAD_LENGTH) {
                 self.ball.vel.y *= -1.0;
                 self.ball.pos.y += self.ball.vel.y * delta_time;
-            } else {
+            } else if check_collision(mint::Point2{x: self.ball.pos.x, y: self.ball.pos.y}, BALL_RADIUS, &self.pad.rect) {
                 self.ball.vel.x *= -1.0;
                 self.ball.pos.x += self.ball.vel.x * delta_time;
                 self.score += 1;
-                println!("score: {}", self.score);
             }
         } 
 
