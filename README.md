@@ -1,12 +1,16 @@
 # PingPangPong <sup>(non racist edition)</sup>
-This is my trials & error to get some neurons to pingpang some pongs! 
+This is my trials & error to get some neurons to pingpang some pongs.
+Inspired by this 2022 [paper](https://www.cell.com/neuron/fulltext/S0896-6273(22)00806-6?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0896627322008066%3Fshowall%3Dtrue) from [Cortical Labs](https://corticallabs.com/) :shipit:
 
-Inspirated by this [paper](https://www.cell.com/neuron/fulltext/S0896-6273(22)00806-6?_returnURL=https%3A%2F%2Flinkinghub.elsevier.com%2Fretrieve%2Fpii%2FS0896627322008066%3Fshowall%3Dtrue) from [Cortical Labs](https://corticallabs.com/) :shipit:
-> [!CAUTION]
-> Code reviews might lead to subsequent eye bleaching. I'm still a noob.
+## ToDos
+- [ ] train a classical agent to get a hang
+- [ ] transition from RNN to SNN
+- [ ] transition from PyTorch to BRIAN 
 
-## Ideas 
+## WannaDos
 - [ ] some scoring animations
 - [ ] rebound sounds!
 
+> [!CAUTION]
+> Code reviews might lead to subsequent eye bleaching. The author is still a noob.
 
