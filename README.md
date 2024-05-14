@@ -8,7 +8,7 @@ Inspired by this 2022 [paper](https://www.cell.com/neuron/fulltext/S0896-6273(22
 - [ ] transition from PyTorch to BRIAN 
 
 ## WannaDos
-- [ ] some scoring animations
+- [ ] some scoring animations (maybe not a good idea for training though)
 - [ ] rebound sounds! (there is no "ping" "pang" or "pong" without actual bonging sounds - crucial element)
 
 > [!CAUTION]
