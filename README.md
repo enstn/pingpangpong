@@ -4,7 +4,7 @@ This is my trials & error to get some neurons to pingpang some pongs! :shipit:
 > Code reviews might lead to subsequent eye bleaching. I'm still a noob.
 
 ## Ideas 
-[] some scoring animations
-[] rebound sounds!
+[ ] some scoring animations
+[ ] rebound sounds!
 
 
