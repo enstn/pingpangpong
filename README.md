@@ -9,7 +9,7 @@ Inspired by this 2022 [paper](https://www.cell.com/neuron/fulltext/S0896-6273(22
 
 ## WannaDos
 - [ ] some scoring animations
-- [ ] rebound sounds!
+- [ ] rebound sounds! (there is no "ping" "pang" or "pong" without actual bonging sounds - crucial element)
 
 > [!CAUTION]
 > Code reviews might lead to subsequent eye bleaching. The author is still a noob.
