@@ -13,7 +13,7 @@ This is my trials & error to get neurons to pingpang some pongs, inspired by thi
 
 ## WannaDos
 - [ ] ~~some scoring animations~~ (not a good idea for RNN training)
-- [ ] rebound sounds! (there is no "ping" "pang" or "pong" without actual bonging sounds - crucial element)
+- [ ] rebound sounds! (bongs are crucial elements)
 
 > [!CAUTION]
 > Code reviews might lead to subsequent eye bleaching. The author is still a noob.
