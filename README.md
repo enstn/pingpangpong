@@ -12,7 +12,7 @@ This is my trials & error to get some neurons to pingpang some pongs, inspired b
 - [ ] transition from PyTorch to BRIAN 
 
 ## WannaDos
-- [ ] ~~some scoring animations (maybe not a good idea for training though)~~
+- [ ] ~~some scoring animations~~ (not a good idea for RNN training)
 - [ ] rebound sounds! (there is no "ping" "pang" or "pong" without actual bonging sounds - crucial element)
 
 > [!CAUTION]
