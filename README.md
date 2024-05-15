@@ -5,11 +5,11 @@ Inspired by this 2022 [paper](https://www.cell.com/neuron/fulltext/S0896-6273(22
 ## ToDos
 - [x] make a working game instance in Rust
 - [ ] train a classical agent to get a hang 
-    - [ ] Rust-Pytorch Bindings
+    - [ ] set up bindings
     - [ ] set up network
     - [ ] set up policy 
-    - [ ] (maybe) somehow integrate into Colab for GPU
-- [ ] transition from RNN to SNN
+    - [ ] somehow integrate into Colab for GPU leverage
+- [ ] transition from RL to SNN
 - [ ] transition from PyTorch to BRIAN 
 
 ## WannaDos
