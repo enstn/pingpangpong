@@ -1,6 +1,8 @@
 use ggez::*;
 use ggez::graphics::Rect;
 use ggez::input::keyboard;
+// use ggez::audio;
+// use ggez::audio::SoundSource;
 
 const SCREEN_WIDTH: f32 = 800.0;
 const SCREEN_HEIGHT: f32 = 600.0;
@@ -53,10 +55,18 @@ struct State {
     ball: Ball,
     pad: Pad,
     score: u32,
+    // sound: audio::Source,
 }
 
 impl State {
     pub fn new(_ctx: &mut Context) -> Self {
+        
+        // let sound_result = audio::Source::new(ctx, "/res/sound.ogg");
+        // let sound = match sound_result {
+        //     Ok(s) => s,
+        //     Err(e) => return Err(GameError::ResourceLoadError(format!("Failed to load sound resources: {}", e))),
+        // };
+
         State {
             ball: Ball::new(),
             pad: Pad::new(),
