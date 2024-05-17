@@ -3,6 +3,7 @@ This is my trials & error to get neurons to pingpang some pongs, inspired by thi
 
 ## ToDos
 - [x] make a working game instance in Rust
+    - [ ] fix edge bug 
 - [ ] train a classical agent to get a hang 
     - [ ] set up bindings
     - [ ] set up network
