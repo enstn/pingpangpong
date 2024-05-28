@@ -7,7 +7,7 @@ use testagent::TestAgent;
 fn main() {
     println!("Hello world! Ready to be pingpanged?!");
     
-     // Check command line arguments or a flag to enable/disable the agent
+     // Check command line arguments for enabling/disabling the agent
      let args: Vec<String> = env::args().collect();
      let use_agent = args.get(1).map_or(false, |arg| arg == "use-agent");
  
