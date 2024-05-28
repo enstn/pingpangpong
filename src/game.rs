@@ -4,6 +4,8 @@ use ggez::input::keyboard;
 // use ggez::audio;
 // use ggez::audio::SoundSource;
 
+use crate::testagent::{TestAgent,Action};
+
 const SCREEN_WIDTH: f32 = 800.0;
 const SCREEN_HEIGHT: f32 = 600.0;
 const SCREEN_WIDTH_MID: f32 = SCREEN_WIDTH / 2.0;
@@ -55,11 +57,12 @@ struct State {
     ball: Ball,
     pad: Pad,
     score: u32,
+    agent: Option<TestAgent>,
     // sound: audio::Source,
 }
 
 impl State {
-    pub fn new(_ctx: &mut Context) -> Self {
+    pub fn new(_ctx: &mut Context, agent: Option<TestAgent>) -> Self {
         
         // let sound_result = audio::Source::new(ctx, "/res/sound.ogg");
         // let sound = match sound_result {
@@ -71,6 +74,7 @@ impl State {
             ball: Ball::new(),
             pad: Pad::new(),
             score: 0,
+            agent,
         }
     }
     
@@ -127,15 +131,34 @@ impl ggez::event::EventHandler for State {
 
         }
 
-        // pad movement w/ key inputs
-        if ctx.keyboard.is_key_pressed( keyboard::KeyCode::Up) {
-            if self.pad.rect.y > 0.0 {
-                self.pad.rect.y -= PAD_VELOCITY * delta_time;
+        // pad movement w/ agent
+        if let Some(ref agent) = self.agent {
+            match agent.choose_action() {
+                Action::Up => {
+                    if self.pad.rect.y > 0.0 {
+                        self.pad.rect.y -= PAD_VELOCITY * delta_time;
+                    }
+                }
+                Action::Down => {
+                    if self.pad.rect.y < (SCREEN_HEIGHT - PAD_LENGTH) {
+                        self.pad.rect.y += PAD_VELOCITY * delta_time;
+                    }
+                }
+                Action::Stay => {
+                    // nothing should happen of course
+                }
+            } 
+        } else {
+            // pad movement w/ key inputs
+            if ctx.keyboard.is_key_pressed( keyboard::KeyCode::Up) {
+                if self.pad.rect.y > 0.0 {
+                    self.pad.rect.y -= PAD_VELOCITY * delta_time;
+                }
             }
-        }
-        if ctx.keyboard.is_key_pressed( keyboard::KeyCode::Down) {
-            if self.pad.rect.y < (SCREEN_HEIGHT - PAD_LENGTH) {
-                self.pad.rect.y += PAD_VELOCITY * delta_time;
+            if ctx.keyboard.is_key_pressed( keyboard::KeyCode::Down) {
+                if self.pad.rect.y < (SCREEN_HEIGHT - PAD_LENGTH) {
+                    self.pad.rect.y += PAD_VELOCITY * delta_time;
+                }
             }
         }
 
@@ -208,12 +231,12 @@ impl ggez::event::EventHandler for State {
     }
 }
 
-pub fn main() {
+pub fn main(agent: Option<TestAgent>) {
 
     let context_builder = ggez::ContextBuilder::new("pingpangpong", "Lai")
         .window_mode(ggez::conf::WindowMode::default().dimensions(SCREEN_WIDTH, SCREEN_HEIGHT).borderless(false));
     let (mut context, event_loop) = context_builder.build().unwrap();
-    let state = State::new(&mut context);
+    let state = State::new(&mut context, agent);
     context.gfx.set_window_title("pingpangpong");
 
     ggez::event::run(context, event_loop, state);
