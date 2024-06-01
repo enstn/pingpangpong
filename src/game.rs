@@ -5,6 +5,7 @@ use ggez::input::keyboard;
 // use ggez::audio::SoundSource;
 
 use crate::testagent::{TestAgent,Action};
+// use crate::agent1::{Agent1, Action};
 
 const SCREEN_WIDTH: f32 = 800.0;
 const SCREEN_HEIGHT: f32 = 600.0;
@@ -57,6 +58,7 @@ struct State {
     ball: Ball,
     pad: Pad,
     score: u32,
+    highscore: u32,
     agent: Option<TestAgent>,
     // sound: audio::Source,
 }
@@ -74,6 +76,7 @@ impl State {
             ball: Ball::new(),
             pad: Pad::new(),
             score: 0,
+            highscore: 0, 
             agent,
         }
     }
@@ -92,6 +95,7 @@ impl State {
     }
 }
 
+// TODO: this has to be modified to fix edge bug!
 fn check_collision (ball_pos: mint::Point2<f32>, ball_radius: f32, rect: &ggez::graphics::Rect) -> bool {
     let closest_x = ball_pos.x.min(rect.x + rect.w).max(rect.x);
     let closest_y = ball_pos.y.min(rect.y + rect.h).max(rect.y);
@@ -99,7 +103,7 @@ fn check_collision (ball_pos: mint::Point2<f32>, ball_radius: f32, rect: &ggez::
     let distance_x = ball_pos.x - closest_x;
     let distance_y = ball_pos.y - closest_y;
 
-    if (distance_x.powi(2) + distance_y.powi(2)) < ball_radius.powi(2) {
+    if (distance_x.powi(2) + distance_y.powi(2)) < ball_radius.powi(2) && ball_pos.x > PAD_LEFT_EDGE + PAD_WIDTH / 2.0 {
         return true;
     }
 
@@ -171,6 +175,9 @@ impl ggez::event::EventHandler for State {
                 self.ball.vel.x *= -1.0;
                 self.ball.pos.x += self.ball.vel.x * delta_time;
                 self.score += 1;
+                if self.score > self.highscore {
+                    self.highscore = self.score;
+                }
             }
         } 
 
@@ -215,6 +222,11 @@ impl ggez::event::EventHandler for State {
         let score_dimensions = score.measure(ctx);
         let score_width = score_dimensions.unwrap().x;
 
+        let mut highscore = ggez::graphics::Text::new(format!("Highscore: {}", self.highscore));
+        highscore.set_scale(SCORE_FONT_SIZE);
+        let highscore_dimensions = highscore.measure(ctx);
+        let highscore_width = highscore_dimensions.unwrap().x;
+
         // set the params for drawing (this gets the position done)
         let draw_parameters = graphics::DrawParam::default();
         
@@ -225,6 +237,8 @@ impl ggez::event::EventHandler for State {
         canvas.draw(&pad, draw_parameters);
         
         canvas.draw(&score, mint::Point2{x: SCREEN_WIDTH - score_width, y: 2.0});
+        canvas.draw(&highscore, mint::Point2{x: SCREEN_WIDTH - highscore_width, y: 32.0});
+        
         // I like it, picasso
         let _ = canvas.finish(ctx);
         Ok(())
