@@ -4,14 +4,13 @@ This is my trials & error to get neurons to pingpang some pongs, inspired by thi
 ## ToDos
 - [x] make a working game instance in Rust
     - [x] fix edge bug 
-- [ ] train a classical agent to get a hang 
+- [ ] train a dumb agent to get a hang 
     - [x] testagent 
-    - [ ] set up bindings
+    - [ ] set up proper bindings
     - [ ] set up network
     - [ ] set up policy 
-    - [ ] somehow integrate into Colab for GPU leverage
 - [ ] transition from RL to SNN
-- [ ] transition from PyTorch to BRIAN 
+- [ ] transition from BRIAN to NEURON
 
 ## WannaDos
 - [ ] ~~some scoring animations~~ (not a good idea for RNN training)
